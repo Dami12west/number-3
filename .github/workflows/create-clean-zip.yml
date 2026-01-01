@@ -1,0 +1,27 @@
+name: Create Clean Zip
+
+on:
+  push:
+    branches:
+      - main  # یا هر شاخه‌ای که از آن استفاده می‌کنید
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Zip file (Clean)
+        run: |
+          # این دستور فقط محتویات را بدون پوشه مادر زیپ می‌کند
+          zip -r my-clean-project.zip . -x "*.git*" ".github*"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release ${{ github.run_number }}
+          files: my-clean-project.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
